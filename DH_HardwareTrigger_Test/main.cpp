@@ -50,29 +50,36 @@ static void GX_STDC OnFrameCallbackFun(GX_FRAME_CALLBACK_PARAM* pFrame)
 int main(int argc, char* argv[])
 {
 	GX_STATUS emStatus = GX_STATUS_SUCCESS;
-	GX_OPEN_PARAM openParam;
+	GX_OPEN_PARAM openParam;	///用户配置的打开设备参数,参见GX_OPEN_PARAM结构体定义
 	uint32_t nDeviceNum = 0;
-	openParam.accessMode = GX_ACCESS_EXCLUSIVE;
-	openParam.openMode = GX_OPEN_INDEX;
-	openParam.pszContent = "1";
+	openParam.accessMode = GX_ACCESS_EXCLUSIVE;	 ///< 访问模式-< 独占方式
+	openParam.openMode = GX_OPEN_INDEX;	///< 打开方式-< 通过Index打开
+	openParam.pszContent = "1";	///< 输入参数内容,不允许为空字符串
 	//初始化库   	
 	emStatus = GXInitLib();
 	if (emStatus != GX_STATUS_SUCCESS)
 	{
 		return 0;
 	}
-	//枚举设备列表
-	emStatus = GXUpdateDeviceList(&nDeviceNum, 1000);
+	//枚举所有设备并且获取设备个数,对于千兆网设备此接口仅能枚举同网段设备
+	emStatus = GXUpdateDeviceList(&nDeviceNum, 1000); 
 	if ((emStatus != GX_STATUS_SUCCESS) || (nDeviceNum <= 0))
 	{
 		return 0;
 	}
-	//打开设备 
+	/**
+	\brief     通过指定唯一标示打开设备，例如指定SN、IP、MAC等
+	\attention 此接口调用之前需要调用GXUpdateDeviceList接口，更新库内部设备列表
+	\param     [in]pOpenParam    用户配置的打开设备参数,参见GX_OPEN_PARAM结构体定义
+	\param     [out]phDevice     返回设备句柄
+	*/
 	emStatus = GXOpenDevice(&openParam, &m_hDevice);
 	//设置采集模式连续采集 
-	emStatus = GXSetEnum(m_hDevice, GX_ENUM_ACQUISITION_MODE, GX_ACQ_MODE_CONTINUOUS);
-	emStatus = GXSetInt(m_hDevice, GX_INT_ACQUISITION_SPEED_LEVEL, 1);
-	emStatus = GXSetEnum(m_hDevice, GX_ENUM_BALANCE_WHITE_AUTO, GX_BALANCE_WHITE_AUTO_OFF);
+	//GXSetEnum\brief 设置枚举型值的当前值  \param[in]hDevice 设备句柄 \param[in]featureID 功能码ID \param[in]pnValue 用户设置的当前值
+	emStatus = GXSetEnum(m_hDevice, GX_ENUM_ACQUISITION_MODE, GX_ACQ_MODE_CONTINUOUS);	///< 采集模式,参考GX_ACQUISITION_MODE_ENTRY-<连续模式
+	/**\brief 设置Int类型值的当前值 \param [in]hDevice 设备句柄 \param [in]featureID 功能码ID \param [in]pnValue 用户设置的当前值*/
+	emStatus = GXSetInt(m_hDevice, GX_INT_ACQUISITION_SPEED_LEVEL, 1);///< 采集速度级别-
+	emStatus = GXSetEnum(m_hDevice, GX_ENUM_BALANCE_WHITE_AUTO, GX_BALANCE_WHITE_AUTO_OFF);	 ///<自动白平衡, 参考GX_BALANCE_WHITE_AUTO_ENTRY-< 关闭自动白平衡
 	bool      bColorFliter = false;
 	//获取图像大小  	
 	emStatus = GXGetInt(m_hDevice, GX_INT_PAYLOAD_SIZE, &m_nPayLoadSize);
@@ -103,8 +110,13 @@ int main(int argc, char* argv[])
 	}
 	//注册图像处理回调函数 
 	emStatus = GXRegisterCaptureCallback(m_hDevice, NULL, OnFrameCallbackFun);
-	//发送开采命令
-	emStatus = GXSendCommand(m_hDevice, GX_COMMAND_ACQUISITION_START);
+	/**
+	\brief      发送控制命令
+		\attention  无
+		\param[in]hDevice    设备句柄
+		\param[in]featureID  功能码ID
+	*/
+	emStatus = GXSendCommand(m_hDevice, GX_COMMAND_ACQUISITION_START);	///< 开始采集
 	//---------------------  
 	while (1)
 	{

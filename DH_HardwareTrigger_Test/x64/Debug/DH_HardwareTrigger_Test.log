@@ -3,6 +3,6 @@ d:\program files\opencv3.1.0\opencv\build\include\opencv2\core\mat.hpp(1965): wa
 d:\program files\opencv3.1.0\opencv\build\include\opencv2\core\persistence.hpp : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
 d:\program files\opencv3.1.0\opencv\build\include\opencv2\core\utility.hpp : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
 d:\program files\opencv3.1.0\opencv\build\include\opencv2\core\utility.hpp : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
-e:\2019-robomaster\programbase\视觉\dh_hardwaretrigger_test\dh_hardwaretrigger_test\main.cpp(83): warning C4244: “参数”: 从“int64_t”转换到“int”，可能丢失数据
+e:\2019-robomaster\programbase\视觉\dh_hardwaretrigger_test\dh_hardwaretrigger_test\main.cpp(90): warning C4244: “参数”: 从“int64_t”转换到“int”，可能丢失数据
   DH_HardwareTrigger_Test.vcxproj -> E:\2019-Robomaster\ProgramBase\视觉\DH_HardwareTrigger_Test\x64\Debug\DH_HardwareTrigger_Test.exe
   DH_HardwareTrigger_Test.vcxproj -> E:\2019-Robomaster\ProgramBase\视觉\DH_HardwareTrigger_Test\x64\Debug\DH_HardwareTrigger_Test.pdb (Full PDB)
