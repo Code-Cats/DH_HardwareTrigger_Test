@@ -49,6 +49,8 @@ static void GX_STDC OnFrameCallbackFun(GX_FRAME_CALLBACK_PARAM* pFrame)
 
 int main(int argc, char* argv[])
 {
+	GXCloseLib();
+	Sleep(100);
 	GX_STATUS emStatus = GX_STATUS_SUCCESS;
 	GX_OPEN_PARAM openParam;	///用户配置的打开设备参数,参见GX_OPEN_PARAM结构体定义
 	uint32_t nDeviceNum = 0;
@@ -77,9 +79,21 @@ int main(int argc, char* argv[])
 	//设置采集模式连续采集 
 	//GXSetEnum\brief 设置枚举型值的当前值  \param[in]hDevice 设备句柄 \param[in]featureID 功能码ID \param[in]pnValue 用户设置的当前值
 	emStatus = GXSetEnum(m_hDevice, GX_ENUM_ACQUISITION_MODE, GX_ACQ_MODE_CONTINUOUS);	///< 采集模式,参考GX_ACQUISITION_MODE_ENTRY-<连续模式
+
+	emStatus = GXSetEnum(m_hDevice, GX_ENUM_TRIGGER_MODE, GX_TRIGGER_MODE_ON);	//打开触发模式 
+	emStatus = GXSetEnum(m_hDevice, GX_ENUM_TRIGGER_SWITCH, GX_TRIGGER_SWITCH_ON);	//打开外触发模式 
+	emStatus = GXSetEnum(m_hDevice, GX_ENUM_TRIGGER_SOURCE, GX_TRIGGER_SOURCE_LINE2);	//设置触发源LINE2 
+	emStatus = GXSetEnum(m_hDevice, GX_ENUM_TRIGGER_SELECTOR, GX_ENUM_TRIGGER_SELECTOR_FRAME_START);	//触发类型：采集一帧
+	///emStatus = GXSetEnum(m_hDevice, GX_ENUM_TRIGGER_SOURCE, GX_TRIGGER_SOURCE_LINE2);
+
 	/**\brief 设置Int类型值的当前值 \param [in]hDevice 设备句柄 \param [in]featureID 功能码ID \param [in]pnValue 用户设置的当前值*/
 	emStatus = GXSetInt(m_hDevice, GX_INT_ACQUISITION_SPEED_LEVEL, 1);///< 采集速度级别-
 	emStatus = GXSetEnum(m_hDevice, GX_ENUM_BALANCE_WHITE_AUTO, GX_BALANCE_WHITE_AUTO_OFF);	 ///<自动白平衡, 参考GX_BALANCE_WHITE_AUTO_ENTRY-< 关闭自动白平衡
+
+	//设置硬件图像反转
+	//emStatus=GXSetBool(m_hDevice, GX_BOOL_REVERSE_X, true);	//硬件不支持
+	//emStatus=GXSetBool(m_hDevice, GX_BOOL_REVERSE_Y, true);	//硬件不支持
+
 	bool      bColorFliter = false;
 	//获取图像大小  	
 	emStatus = GXGetInt(m_hDevice, GX_INT_PAYLOAD_SIZE, &m_nPayLoadSize);
@@ -118,9 +132,13 @@ int main(int argc, char* argv[])
 	*/
 	emStatus = GXSendCommand(m_hDevice, GX_COMMAND_ACQUISITION_START);	///< 开始采集
 	//---------------------  
+	Mat SrcImg;
 	while (1)
 	{
-
+		cout << "采集帧数：" << frame_count<< endl;
+		test.copyTo(SrcImg);
+		imshow("raw image",SrcImg);
+		waitKey(1);
 	}
 
 	//发送停采命令  
